@@ -1,7 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
+import { getFirestore, collection, query, where, addDoc, getDocs } from "firebase/firestore";
 import { html, render } from "lit-html";
 
 const firebaseConfig = {
@@ -18,5 +17,24 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const userCollection = collection(db, "user");
 
-const analytics = getAnalytics(app);
+document.getElementById("login-btn").addEventListener("click", async () => {
+    let usernameInput = document.getElementById("username").value;
+    console.log(typeof(usernameInput));
+
+    try {
+        const userQuery = query(userCollection, where("username", "==", usernameInput));
+        const userQueryResult = await getDocs(userQuery);
+        const username = userQueryResult.docs[0].data()["username"];
+        const jobs = userQueryResult.docs[0].data()["jobs"];
+        document.getElementById("loggedin-username").textContent = "Welcome! " + username;
+    } catch (e) {
+        console.log("error on login/sign up:", e);
+    }
+    console.log(usernameInput);
+})
+
+document.getElementById("add-job-btn").addEventListener("click", () => {
+    console.log(111);
+})
