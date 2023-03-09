@@ -23,7 +23,23 @@ let currentUser = "";
 let currentJobs = [];
 let currentUserId = "";
 
+function displaySingleJob(jobs) {
+
+    return html`
+        ${jobs.map((job) => {
+            return html`
+            <div class="job">
+                <div>${job.title}</div>
+                <div>${job.companyName}</div>
+                <div>${job.jdLink}</div>
+                <div>${job.status}</div>
+            </div>`;
+        })}
+    `;
+}
+
 document.getElementById("login-btn").addEventListener("click", async () => {
+    const curJobList = document.querySelector(".job-list");
     let usernameInput = document.getElementById("username").value;
     try {
         const findUserQuery = query(userCollection, where("username", "==", usernameInput));
@@ -40,7 +56,7 @@ document.getElementById("login-btn").addEventListener("click", async () => {
             currentUserId = userQueryResult.docs[0].id;
         }
         document.getElementById("loggedin-username").textContent = "Welcome! " + currentUser;
-        console.log(currentUserId);
+        render(displaySingleJob(currentJobs), document.querySelector(".job-list"));
     } catch (e) {
         console.log("error on login/sign up:", e);
     }
@@ -58,6 +74,7 @@ document.getElementById("add-job-btn").addEventListener("click", async () => {
         await updateDoc(doc(db, "user", currentUserId), {
             jobs: currentJobs
         });
+        render(displaySingleJob(currentJobs), document.querySelector(".job-list"));
     } catch (e) {
         console.log("failed to add the job:", e);
     }
