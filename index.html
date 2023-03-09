@@ -6,18 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>job search</title>
     
-    <script type="module" crossorigin src="/job-search-website-prototype/assets/index-b65aca65.js"></script>
+    <script type="module" crossorigin src="/job-search-website-prototype/assets/index-e5330941.js"></script>
     <link rel="stylesheet" href="/job-search-website-prototype/assets/index-3f9ff78b.css">
   </head>
   <body>
     <div class="website-title">Job Search Website</div>
-    <div class="login">
+    <div class="login-container">
         <label for="username">User Name:</label>
         <input type="text" id="username" name="username"/>
         <input type="button" id="login-btn" value="Log in/Sign up"/>
         <div id="loggedin-username"></div>
     </div>
-    <div class="add-job">
+    <div class="add-job-container">
         <div>Add your job here</div>
         <form>
             <label for="job-title">Job Title:</label>
@@ -30,6 +30,10 @@
             <input type="text" id="status" name="status"/>
             <input type="button" id="add-job-btn" value="Add"/>
         </form>
+    </div>
+    <div class="job-list-container">
+        <div>Your jobs:</div>
+        <div class="job-list"></div>
     </div>
     
   </body>
