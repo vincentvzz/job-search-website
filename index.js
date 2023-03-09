@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, query, where, addDoc, getDocs } from "firebase/firestore";
+import { getFirestore, collection, query, where, doc, addDoc, setDoc, getDocs, updateDoc } from "firebase/firestore";
 import { html, render } from "lit-html";
 
 const firebaseConfig = {
@@ -19,22 +19,46 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const userCollection = collection(db, "user");
 
+let currentUser = "";
+let currentJobs = [];
+let currentUserId = "";
+
 document.getElementById("login-btn").addEventListener("click", async () => {
     let usernameInput = document.getElementById("username").value;
-    console.log(typeof(usernameInput));
-
     try {
-        const userQuery = query(userCollection, where("username", "==", usernameInput));
-        const userQueryResult = await getDocs(userQuery);
-        const username = userQueryResult.docs[0].data()["username"];
-        const jobs = userQueryResult.docs[0].data()["jobs"];
-        document.getElementById("loggedin-username").textContent = "Welcome! " + username;
+        const findUserQuery = query(userCollection, where("username", "==", usernameInput));
+        const userQueryResult = await getDocs(findUserQuery);
+        if (userQueryResult.docs.length === 0) {
+            await addDoc(userCollection, {
+                username: usernameInput,
+                jobs: [],
+            }).then((newDoc) => { currentUserId = newDoc.id });
+            currentUser = usernameInput;
+        } else {
+            currentUser = userQueryResult.docs[0].data()["username"];
+            currentJobs = userQueryResult.docs[0].data()["jobs"];
+            currentUserId = userQueryResult.docs[0].id;
+        }
+        document.getElementById("loggedin-username").textContent = "Welcome! " + currentUser;
+        console.log(currentUserId);
     } catch (e) {
         console.log("error on login/sign up:", e);
     }
-    console.log(usernameInput);
 })
 
-document.getElementById("add-job-btn").addEventListener("click", () => {
-    console.log(111);
+document.getElementById("add-job-btn").addEventListener("click", async () => {
+    const curJob = {
+        title: document.getElementById("job-title").value,
+        companyName: document.getElementById("company-name").value,
+        jdLink: document.getElementById("jd-link").value,
+        status: document.getElementById("status").value,
+    };
+    currentJobs.push(curJob);
+    try {
+        await updateDoc(doc(db, "user", currentUserId), {
+            jobs: currentJobs
+        });
+    } catch (e) {
+        console.log("failed to add the job:", e);
+    }
 })
