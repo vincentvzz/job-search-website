@@ -50,6 +50,7 @@ document.getElementById("login-btn").addEventListener("click", async () => {
                 jobs: [],
             }).then((newDoc) => { currentUserId = newDoc.id });
             currentUser = usernameInput;
+            currentJobs = [];
         } else {
             currentUser = userQueryResult.docs[0].data()["username"];
             currentJobs = userQueryResult.docs[0].data()["jobs"];
